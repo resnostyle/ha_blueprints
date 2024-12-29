@@ -1,5 +1,7 @@
 # ha_blueprints 🌟
 
+These blueprints are pretty rough drafts and many things are hardcoded and not configurable. Until I learn more these will be rough and have hard coded values.
+
 ## Welcome! 👋
 Welcome to the ha_blueprints repository! This collaborative space is for anyone interested in creating and sharing Home Assistant blueprints. Whether you're a seasoned developer or just starting out, your contributions are welcome!
 
