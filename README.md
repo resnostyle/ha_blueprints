@@ -9,13 +9,24 @@ If you have ideas, improvements, or issues to report, feel free to submit a merg
 
 ## Blueprint Overview 📜
 
-- Blueprint 1: About this blueprint
-STABLE: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
+- **Blueprint 1: Configurable Room Cleaning**
+  - **Description**: Easy room selection with options for suction level and mopping after vacuuming.
+  - **Features**:
+    - Automates the cleaning process with MQTT status updates.
+    - Conditional mopping.
+  - **Status**:
+    - STABLE: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
+    - BETA: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
 
-BETA: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
+- **Blueprint 2: Configurable Room Cleaning (Multiple Rooms)**
+  - **Description**: Similar structure to the single-room blueprint but allows for multiple rooms to be cleaned in one go.
+  - **Features**:
+    - Multiple rooms can be selected for cleaning.
+  - **Status**:
+    - STABLE: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
+    - BETA: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
 
-- Blueprint 2: Description
-- Blueprint 3: Description
+- **Blueprint 3: Description**
 
 ## Getting Started 🚀
 To get started, clone the repository and explore the existing blueprints. Feel free to modify and create your own!
