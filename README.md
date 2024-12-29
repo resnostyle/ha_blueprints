@@ -16,14 +16,14 @@ If you have ideas, improvements, or issues to report, feel free to submit a merg
   - Automates the cleaning process with MQTT status updates.
   - Conditional mopping.
 - **Status**:
-  - **STABLE**: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
-  - **BETA**: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
+  - **STABLE**: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/resnostyle/ha_blueprints/refs/heads/main/dreame_multi_room_cleaning.yaml.yaml)
+  - **BETA**: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=#)
 
 ### Blueprint 2: Configurable Room Cleaning (Multiple Rooms)
 - **Description**: Similar to the single-room blueprint but allows for multiple rooms to be cleaned in one go.
 - **Status**:
-  - **STABLE**: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
-  - **BETA**: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=things)
+  - **STABLE**: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/resnostyle/ha_blueprints/refs/heads/main/dreame_room_cleaning.yaml.yaml)
+  - **BETA**: [![Import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=#)
 
 ### Blueprint 3: Description
 - **Description**: [Add a brief description of Blueprint 3 here.]
