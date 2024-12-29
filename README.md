@@ -8,6 +8,9 @@ Welcome to the ha_blueprints repository! This is a collaborative space for anyon
 If you have ideas, improvements, or issues to report, feel free to submit a merge request or open an issue. Let's work together to enhance our Home Assistant experience!
 
 ## Blueprint Overview 📜
+These blueprints are designed to be used with the [Home Assistant](https://www.home-assistant.io/) platform. They are designed to be used with the [Home Assistant Blueprints](https://www.home-assistant.io/integrations/blueprint/) integration.
+
+Currently these are rough drafts and not ready for production use. Beware of bugs and issues many things are hardcoded and not configurable and subject to change.
 
 - **Blueprint 1: Configurable Room Cleaning**
   - **Description**: Easy room selection with options for suction level and mopping after vacuuming.
