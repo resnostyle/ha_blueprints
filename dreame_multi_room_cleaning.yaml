@@ -1,13 +1,14 @@
 blueprint:
-  name: Dreame Room Cleaning
-  description: Configurable room cleaning with easy room selection
+  name: Dreame Multi-Room Cleaning
+  description: Configurable room cleaning with multiple room selection
   domain: automation
   input:
-    room:
-      name: Room to Clean
-      description: Select the room to clean
+    rooms:
+      name: Rooms to Clean
+      description: Select the rooms to clean
       selector:
         select:
+          multiple: true
           options:
             - label: "Room 1"
               value: "1"
@@ -52,7 +53,7 @@ trigger:
       service: clean_room
 
 variables:
-  room_id: "{{ input.room }}"
+  selected_rooms: "{{ input.rooms }}"
   
 action:
   # Initial status
@@ -62,7 +63,7 @@ action:
       payload: >
         {
           "room_clean": "started",
-          "room": "{{ input.room }}",
+          "rooms": {{ input.rooms | tojson }},
           "mop_after": {{ input.mop_after | tojson }}
         }
 
@@ -73,12 +74,12 @@ action:
     data:
       option: sweeping
 
-  # Clean room
+  # Clean rooms
   - service: dreame_vacuum.vacuum_clean_segment
     target:
       entity_id: vacuum.orbit
     data:
-      segments: ["{{ input.room }}"]
+      segments: "{{ input.rooms }}"
       suction_level: "{{ input.suction_level }}"
       repeats: 1
 
@@ -104,7 +105,7 @@ action:
             target:
               entity_id: vacuum.orbit
             data:
-              segments: ["{{ input.room }}"]
+              segments: "{{ input.rooms }}"
               repeats: 1
           - wait_template: >
               {% set task_state = states('sensor.orbit_task_status') %}
@@ -118,7 +119,7 @@ action:
       payload: >
         {
           "room_clean": "completed",
-          "room": "{{ input.room }}"
+          "rooms": {{ input.rooms | tojson }}
         }
 
 mode: single
