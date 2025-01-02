@@ -9,24 +9,18 @@ blueprint:
       selector:
         select:
           multiple: true
-          options:
-            - label: "Room 1"
-              value: "1"
-            - label: "Living Room"
-              value: "2"
-            - label: "Bathroom"
-              value: "3"
-            - label: "Table"
-              value: "4"
-            - label: "Kitchen"
-              value: "5"
-            - label: "Dining Room"
-              value: "6"
-            - label: "Dining Hall"
-              value: "7"
-            - label: "Pantry"
-              value: "8"
-    
+          options: >
+            {% set segments = state_attr('vacuum.orbit', 'segments') %}
+            {% set rooms = [] %}
+            {% for segment in segments %}
+              {% set room = {
+                'label': segment.name,
+                'value': segment.id | string
+              } %}
+              {% set rooms = rooms + [room] %}
+            {% endfor %}
+            {{ rooms }}
+        
     cleaning_order:
       name: Room Cleaning Order
       description: Choose how rooms should be cleaned
