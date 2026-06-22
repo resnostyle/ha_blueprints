@@ -1,0 +1,224 @@
+blueprint:
+  name: Dreame Multi-Room Cleaning
+  description: Configurable room cleaning with multiple room selection and smart features
+  domain: automation
+  input:
+    rooms:
+      name: Rooms to Clean
+      description: Select the rooms to clean
+      selector:
+        select:
+          multiple: true
+          options:
+            - label: "Room 1"
+              value: "1"
+            - label: "Living Room"
+              value: "2"
+            - label: "Bathroom"
+              value: "3"
+            - label: "Table"
+              value: "4"
+            - label: "Kitchen"
+              value: "5"
+            - label: "Dining Room"
+              value: "6"
+            - label: "Dining Hall"
+              value: "7"
+            - label: "Pantry"
+              value: "8"
+    
+    cleaning_order:
+      name: Room Cleaning Order
+      description: Choose how rooms should be cleaned
+      default: sequential
+      selector:
+        select:
+          options:
+            - label: "Sequential (As Listed)"
+              value: "sequential"
+            - label: "Random"
+              value: "random"
+
+    suction_level:
+      name: Suction Level
+      description: Suction level for cleaning (0-3)
+      default: 1
+      selector:
+        number:
+          min: 0
+          max: 3
+          step: 1
+          mode: slider
+
+    mop_after:
+      name: Mop After Vacuum
+      description: Run mopping cycle after vacuuming
+      default: false
+      selector:
+        boolean:
+
+    mop_water_level:
+      name: Mop Water Level
+      description: Water usage level for mopping (1-3)
+      default: 2
+      selector:
+        number:
+          min: 1
+          max: 3
+          step: 1
+          mode: slider
+
+    battery_minimum:
+      name: Minimum Battery Level
+      description: Return to dock if battery falls below this level
+      default: 20
+      selector:
+        number:
+          min: 10
+          max: 50
+          step: 5
+          unit_of_measurement: "%"
+
+    notify_status:
+      name: Send Notifications
+      description: Send notifications about cleaning status
+      default: false
+      selector:
+        boolean:
+
+trigger:
+  - platform: event
+    event_type: call_service
+    event_data:
+      domain: script
+      service: clean_room
+
+variables:
+  selected_rooms: >
+    {% if input.cleaning_order == 'random' %}
+      {{ input.rooms | shuffle }}
+    {% else %}
+      {{ input.rooms }}
+    {% endif %}
+  
+action:
+  # Validate conditions
+  - condition: template
+    value_template: >
+      {{ states('vacuum.orbit') != 'error' and
+         states('sensor.orbit_battery_level') | float > input.battery_minimum | float and
+         (not input.mop_after or states('sensor.orbit_water_tank') != 'absent') }}
+
+  # Initial notification
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ input.notify_status }}"
+        sequence:
+          - service: notify.mobile_app
+            data:
+              message: "Starting to clean {{ input.rooms | length }} rooms"
+              data:
+                push:
+                  category: "vacuum_start"
+
+  # Initial status
+  - service: mqtt.publish
+    data:
+      topic: home/vacuum/status
+      payload: >
+        {
+          "room_clean": "started",
+          "rooms": {{ input.rooms | tojson }},
+          "mop_after": {{ input.mop_after | tojson }}
+        }
+
+  # Vacuum phase
+  - service: select.select_option
+    target:
+      entity_id: select.orbit_cleaning_mode
+    data:
+      option: sweeping
+
+  # Check battery and clean rooms
+  - repeat:
+      sequence:
+        # Check battery level
+        - condition: template
+          value_template: >
+            {{ states('sensor.orbit_battery_level') | float > input.battery_minimum | float }}
+        
+        # Clean rooms
+        - service: dreame_vacuum.vacuum_clean_segment
+          target:
+            entity_id: vacuum.orbit
+          data:
+            segments: "{{ selected_rooms }}"
+            suction_level: "{{ input.suction_level }}"
+            repeats: 1
+
+        - wait_template: >
+            {% set task_state = states('sensor.orbit_task_status') %}
+            {{ task_state == 'completed' }}
+          continue_on_timeout: false
+          timeout:
+            minutes: 30
+
+      until:
+        - condition: template
+          value_template: >
+            {% set task_state = states('sensor.orbit_task_status') %}
+            {{ task_state == 'completed' }}
+
+  # Mop phase if requested
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ input.mop_after }}"
+          - condition: template
+            value_template: "{{ states('sensor.orbit_water_tank') != 'absent' }}"
+        sequence:
+          - delay:
+              seconds: 15
+          - service: select.select_option
+            target:
+              entity_id: select.orbit_cleaning_mode
+            data:
+              option: mopping
+          - service: dreame_vacuum.vacuum_clean_segment
+            target:
+              entity_id: vacuum.orbit
+            data:
+              segments: "{{ selected_rooms }}"
+              water_level: "{{ input.mop_water_level }}"
+              repeats: 1
+          - wait_template: >
+              {% set task_state = states('sensor.orbit_task_status') %}
+              {{ task_state == 'completed' }}
+            continue_on_timeout: false
+            timeout:
+              minutes: 30
+
+  # Final status and notification
+  - service: mqtt.publish
+    data:
+      topic: home/vacuum/status
+      payload: >
+        {
+          "room_clean": "completed",
+          "rooms": {{ input.rooms | tojson }}
+        }
+
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ input.notify_status }}"
+        sequence:
+          - service: notify.mobile_app
+            data:
+              message: "Completed cleaning {{ input.rooms | length }} rooms"
+              data:
+                push:
+                  category: "vacuum_complete"
+
+mode: single
